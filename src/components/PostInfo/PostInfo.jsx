@@ -1,11 +1,16 @@
 import commentsFromServers from '../../api/comments.json';
+import usersFromServer from '../../api/users.json';
 import { CommentList } from '../CommentList/CommentList';
 import { UserInfo } from '../UserInfo/UserInfo';
 
 export const PostInfo = ({ post }) => {
-  const filteredComments = commentsFromServers.filter(
-    comments => comments.postId === post.id,
-  );
+  const posts = {
+    ...post,
+    comments: commentsFromServers.filter(
+      comments => comments.postId === post.id,
+    ),
+    user: usersFromServer.find(user => user.id === post.userId),
+  };
 
   return (
     <div className="PostInfo">
@@ -15,7 +20,7 @@ export const PostInfo = ({ post }) => {
         <p>
           {' Posted by  '}
 
-          <UserInfo userId={post.userId} />
+          <UserInfo user={posts.user} />
         </p>
       </div>
 
@@ -23,8 +28,8 @@ export const PostInfo = ({ post }) => {
 
       <hr />
 
-      {filteredComments.length > 0 ? (
-        <CommentList comments={filteredComments} />
+      {posts.comments.length > 0 ? (
+        <CommentList comments={posts.comments} />
       ) : (
         <b data-cy="NoCommentsMessage">No comments yet</b>
       )}
